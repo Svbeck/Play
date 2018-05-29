@@ -22,7 +22,7 @@ import javax.xml.transform.Result
 
 class MainActivity : AppCompatActivity() {
 
-    val url = "http://validate.jsontest.com/?json=%7B%22key%22:%22value%22%7D"
+    val url = "https://api.themoviedb.org/3/movie/550?api_key=ee1b94905d841b2c9579fb3059012985"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,16 +61,17 @@ class MainActivity : AppCompatActivity() {
                 httpURLConnection.requestMethod = "GET"
                 httpURLConnection.connect()
                 val result = httpURLConnection.inputStream.bufferedReader().readText()
+                return result
 
             } catch (exception: Exception) {
                 exception.printStackTrace()
-
+                return ""
             }
-            return ""
+
         }
 
         override fun onPostExecute(result: String?) {
-            tv_movie_data.setText("r")
+            tv_movie_data.setText(result)
         }
     }
 }
