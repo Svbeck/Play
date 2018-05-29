@@ -1,22 +1,36 @@
 package no.svbeck.play
 
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import com.beust.klaxon.JsonObject
+
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.json.JSONObject
+import org.xml.sax.Parser
+import org.xml.sax.helpers.ParserAdapter
+import java.net.HttpURLConnection
+import java.net.URL
+import javax.xml.transform.Result
 
 class MainActivity : AppCompatActivity() {
+
+    val url = "http://validate.jsontest.com/?json=%7B%22key%22:%22value%22%7D"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        tv_movie_data.setText(" Todo !")
+
+        GetJson().execute(url)
+
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
@@ -36,6 +50,27 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+    inner class GetJson() : AsyncTask<String, Int, String >() {
+
+        override fun doInBackground(vararg params: String?): String {
+            try {
+                val url = URL(params[0])
+                val httpURLConnection = url.openConnection() as HttpURLConnection
+                httpURLConnection.requestMethod = "GET"
+                httpURLConnection.connect()
+                val result = httpURLConnection.inputStream.bufferedReader().readText()
+
+            } catch (exception: Exception) {
+                exception.printStackTrace()
+
+            }
+            return ""
+        }
+
+        override fun onPostExecute(result: String?) {
+            tv_movie_data.setText("r")
         }
     }
 }
