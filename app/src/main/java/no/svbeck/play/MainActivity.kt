@@ -10,12 +10,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
+import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import no.svbeck.play.R.id.fab
+import no.svbeck.play.R.id.toolbar
+import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
+import org.json.JSONStringer
 import org.xml.sax.Parser
 import org.xml.sax.helpers.ParserAdapter
 import java.net.HttpURLConnection
@@ -23,8 +29,8 @@ import java.net.URL
 import javax.xml.transform.Result
 
 class MainActivity : AppCompatActivity() {
-
-    val url = "https://api.themoviedb.org/3/movie/550?api_key=ee1b94905d841b2c9579fb3059012985"
+    val API_KEY: String = "ee1b94905d841b2c9579fb3059012985"
+    val url: String = "https://api.themoviedb.org/3/discover/movie?api_key=ee1b94905d841b2c9579fb3059012985&sort_by=popularity.desc"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,18 +64,18 @@ class MainActivity : AppCompatActivity() {
     inner class GetJson() : AsyncTask<String, Int, String >() {
         override fun onPreExecute() {
             //TODO 1: Create progressbar
-           Toast.makeText(applicationContext, "Loading json",Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, "Loading json",Toast.LENGTH_LONG).show()
         }
         override fun doInBackground(vararg params: String?): String {
 
             return try {
-                val url = URL(params[0])
-                val httpURLConnection = url.openConnection() as HttpURLConnection
-                httpURLConnection.requestMethod = "GET"
-                httpURLConnection.connect()
-                httpURLConnection.inputStream.bufferedReader().readText()
+                val url = URL(params[0])    //url string from params
+                val httpURLConnection = url.openConnection() as HttpURLConnection //type of http connection
+                httpURLConnection.requestMethod = "GET" //get method
+                httpURLConnection.connect() //connect to webpage
+                httpURLConnection.inputStream.bufferedReader().readText() //read json as string and returns
 
-            } catch (e: Exception) {
+            } catch (e: Exception) { //catch possible exceptions
                 e.printStackTrace()
                throw e
             }
@@ -77,16 +83,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onPostExecute(result: String?) {
-            //TODO 2: store json data for movie in Movie class http://androidcss.com/android/fetch-json-data-android/
+
             //TODO 3: Create Fragment or recyclerView
             //TODO 4: Bind Movie data to fragment
-            tv_movie_data.setText(result)
+            try {
+                val movieList = mutableListOf<MovieData>()
+                 val jsonObject = JSONObject(result) //get movie results from most popular movies
+                 val jsonArray = jsonObject.getJSONArray("results") //put objects into array
+                 for (i in 0..(jsonArray.length()-1)){ //iterates through length of result
+                    val movieInfo = jsonArray.getJSONObject(i) //turn each movie to an movie object
+                     movieList.add( MovieData(movieInfo))   //Add Json object to Movie
+                     tv_movie_data.setText(movieInfo.toString()) // json data as text
+                 }
+            }catch (e: JSONException){ //Catch errors for json parsing
+                tv_movie_data.setText(e.toString())
+            }
 
-            //TODO 2.1: Create arrayList of movieData
-            //TODO 2.2: Fill json data into json array
-            //TODO 2.3: (inside for)Extract data from jsonArray to JsonObject, create and fill moveiData object with json
             //TODO 2.4: Setup and handover to recyclerView
-            //Remember try and catch JSONException
+
         }
     }
 }
