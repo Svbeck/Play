@@ -64,7 +64,9 @@ class MainActivity : AppCompatActivity() {
     inner class GetJson() : AsyncTask<String, Int, String >() {
         override fun onPreExecute() {
             //TODO 1: Create progressbar
-            Toast.makeText(applicationContext, "Loading json",Toast.LENGTH_LONG).show()
+            pb_circular_progressbar.show()
+
+
         }
         override fun doInBackground(vararg params: String?): String {
 
@@ -83,23 +85,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onPostExecute(result: String?) {
-
-            //TODO 3: Create Fragment or recyclerView
+            //TODO 2: Get json data from tmdb and put it in a class
+            //TODO 3: Create Fragment and/or recyclerView https://developer.android.com/guide/topics/ui/layout/recyclerview#kotlin
             //TODO 4: Bind Movie data to fragment
+            //TODO 5: Get poster image from tmdb and polish gui
+            //TODO 6: Create fragments for side menu
+            lateinit var movieInfo: JSONObject //json object conatining info about movie
             try {
                 val movieList = mutableListOf<MovieData>()
                  val jsonObject = JSONObject(result) //get movie results from most popular movies
                  val jsonArray = jsonObject.getJSONArray("results") //put objects into array
+
+                 pb_circular_progressbar.hide() //hide progress bar
                  for (i in 0..(jsonArray.length()-1)){ //iterates through length of result
-                    val movieInfo = jsonArray.getJSONObject(i) //turn each movie to an movie object
+                     movieInfo = jsonArray.getJSONObject(i) //turn each movie to an movie object
                      movieList.add( MovieData(movieInfo))   //Add Json object to Movie
-                     tv_movie_data.setText(movieInfo.toString()) // json data as text
                  }
+                tv_movie_data.setText(movieInfo.toString()) // json data as text
+
             }catch (e: JSONException){ //Catch errors for json parsing
                 tv_movie_data.setText(e.toString())
             }
 
-            //TODO 2.4: Setup and handover to recyclerView
+
 
         }
     }
