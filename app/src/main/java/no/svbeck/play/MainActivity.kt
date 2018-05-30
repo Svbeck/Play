@@ -1,5 +1,6 @@
 package no.svbeck.play
 
+import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -8,6 +9,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import com.beust.klaxon.JsonObject
 
 
@@ -52,26 +54,39 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+    //Class for asynchronous
     inner class GetJson() : AsyncTask<String, Int, String >() {
-
+        override fun onPreExecute() {
+            //TODO 1: Create progressbar
+           Toast.makeText(applicationContext, "Loading json",Toast.LENGTH_LONG).show()
+        }
         override fun doInBackground(vararg params: String?): String {
-            try {
+
+            return try {
                 val url = URL(params[0])
                 val httpURLConnection = url.openConnection() as HttpURLConnection
                 httpURLConnection.requestMethod = "GET"
                 httpURLConnection.connect()
-                val result = httpURLConnection.inputStream.bufferedReader().readText()
-                return result
+                httpURLConnection.inputStream.bufferedReader().readText()
 
-            } catch (exception: Exception) {
-                exception.printStackTrace()
-                return ""
+            } catch (e: Exception) {
+                e.printStackTrace()
+               throw e
             }
 
         }
 
         override fun onPostExecute(result: String?) {
+            //TODO 2: store json data for movie in Movie class http://androidcss.com/android/fetch-json-data-android/
+            //TODO 3: Create Fragment or recyclerView
+            //TODO 4: Bind Movie data to fragment
             tv_movie_data.setText(result)
+
+            //TODO 2.1: Create arrayList of movieData
+            //TODO 2.2: Fill json data into json array
+            //TODO 2.3: (inside for)Extract data from jsonArray to JsonObject, create and fill moveiData object with json
+            //TODO 2.4: Setup and handover to recyclerView
+            //Remember try and catch JSONException
         }
     }
 }
