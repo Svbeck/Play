@@ -23,12 +23,18 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.json.JSONStringer
-import org.xml.sax.Parser
+//import org.xml.sax.Parser
 import org.xml.sax.helpers.ParserAdapter
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.xml.transform.Result
 
+import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.le.BluetoothLeScanner
+import android.content.Intent
+
+private val REQUEST_ENABLE_BT = 1
 class MainActivity : AppCompatActivity() {
     val API_KEY: String = "ee1b94905d841b2c9579fb3059012985"
     val url: String = "https://api.themoviedb.org/3/discover/movie?api_key=ee1b94905d841b2c9579fb3059012985&sort_by=popularity.desc"
@@ -115,9 +121,20 @@ class MainActivity : AppCompatActivity() {
 
     fun checkBluetoothLeSupport( context :Context){
 
+        val bluetoothAdapter :BluetoothAdapter = BluetoothAdapter.getDefaultAdapter() //Bluetooth adapter
+
+
         if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
-            Toast.makeText(context, "Bluetooth not supportet", Toast.LENGTH_LONG).show()
-        }else
-            Toast.makeText(context, "Bluetooth supportet", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Bluetooth not supported", Toast.LENGTH_LONG).show()
+
+        }else {
+            Toast.makeText(context, "Bluetooth supported", Toast.LENGTH_LONG).show()
+            if (!bluetoothAdapter.isEnabled) {
+                Toast.makeText(context, "Not enabled", Toast.LENGTH_LONG).show()
+                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }else
+                Toast.makeText(context, "Already enabled", Toast.LENGTH_LONG).show()
+        }
     }
 }
