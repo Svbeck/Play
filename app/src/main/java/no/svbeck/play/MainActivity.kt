@@ -1,6 +1,7 @@
 package no.svbeck.play
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         GetJson().execute(url)
-
+        checkBluetoothLeSupport(applicationContext)
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
@@ -110,5 +111,13 @@ class MainActivity : AppCompatActivity() {
 
 
         }
+    }
+
+    fun checkBluetoothLeSupport( context :Context){
+
+        if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
+            Toast.makeText(context, "Bluetooth not supportet", Toast.LENGTH_LONG).show()
+        }else
+            Toast.makeText(context, "Bluetooth supportet", Toast.LENGTH_LONG).show()
     }
 }
