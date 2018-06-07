@@ -32,6 +32,7 @@ import javax.xml.transform.Result
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
 import android.content.Intent
 
 private val REQUEST_ENABLE_BT = 1
@@ -122,7 +123,7 @@ class MainActivity : AppCompatActivity() {
     fun checkBluetoothLeSupport( context :Context){
 
         val bluetoothAdapter :BluetoothAdapter = BluetoothAdapter.getDefaultAdapter() //Bluetooth adapter
-
+        val SCAN_PERIOD :Int = 1000
 
         if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
             Toast.makeText(context, "Bluetooth not supported", Toast.LENGTH_LONG).show()
@@ -133,8 +134,15 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(context, "Not enabled", Toast.LENGTH_LONG).show()
                 val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }else
+
+            }else{
                 Toast.makeText(context, "Already enabled", Toast.LENGTH_LONG).show()
+                scanForBLEDevices(bluetoothAdapter,SCAN_PERIOD)
+            }
         }
+    }
+
+    fun scanForBLEDevices (bleAdapter:BluetoothAdapter, SCAN_PERIOD:Int ){
+
     }
 }
